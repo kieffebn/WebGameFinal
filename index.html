@@ -35,12 +35,12 @@ var config = {
 
 var player;
 var stars;
+var bombs;
 var platforms;
 var cursors;
 var score = 0;
 var gameOver = false;
 var scoreText;
-
 
 var game = new Phaser.Game(config);
 
@@ -104,12 +104,17 @@ function create ()
 
     });
 
+    bombs = this.physics.add.group();
+
     scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(stars, platforms);
+    this.physics.add.collider(bombs, platforms);
 
     this.physics.add.overlap(player, stars, collectStar, null, this);
+
+    this.physics.add.collider(player, bombs, null, this);
 }
 
 function update ()
@@ -163,6 +168,15 @@ function collectStar (player, star)
             child.setVelocity(Phaser.Math.Between(-100, 100), 20)
 
         });
+
+        var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+        var bomb = bombs.create(x, 16, 'bomb');
+        bomb.setBounce(1);
+        bomb.setCollideWorldBounds(true);
+        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+        bomb.allowGravity = false;
+
     }
 }
 
