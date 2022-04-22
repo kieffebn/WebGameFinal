@@ -34,6 +34,7 @@ var config = {
 };
 
 var player;
+var stars;
 var platforms;
 var cursors;
 var score = 0;
@@ -46,6 +47,7 @@ function preload ()
 {
     this.load.image('sky', 'assets/sky.png');
     this.load.image('ground', 'assets/platform.png');
+    this.load.image('star', 'assets/star.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
 }
 
@@ -88,7 +90,26 @@ function create ()
 
     cursors = this.input.keyboard.createCursorKeys();
 
+    stars = this.physics.add.group({
+        key: 'star',
+        repeat: 11,
+        setXY: { x: 12, y: 0, stepX: 70 }
+    });
+
+    stars.children.iterate(function (child) {
+
+        child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.5));
+
+    });
+
+
+    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
     this.physics.add.collider(player, platforms);
+    this.physics.add.collider(stars, platforms);
+
+    this.physics.add.overlap(player, stars, null, this);
+
 }
 
 function update ()
